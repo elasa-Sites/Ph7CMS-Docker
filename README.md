@@ -15,6 +15,16 @@ Install Docker.
 #Instalation:
 
 `git clone https://github.com/elasa-Sites/Ph7CMS-Docker`
+
 `cd Ph7CMS-Docker`
+
 `sudo docker build -t ubuntu-test:latest .`
+
+#Instaltion in https://labs.play-with-docker.com:
+
+`git clone https://github.com/elasa-Sites/Ph7CMS-Docker`
+
+`cd Ph7CMS-Docker`
+
+`docker build -t ubuntu-test:latest .
 
