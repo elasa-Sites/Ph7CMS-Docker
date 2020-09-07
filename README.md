@@ -1,5 +1,8 @@
 # Ph7CMS-Docker
-Dockerfile for PH7CMS free opensource Dating platform
+Dockerfile for [PH7CMS][1] free opensource Dating platform
+
+
+
 
 
 Ubuntu Dockerfile
@@ -28,3 +31,4 @@ Install Docker.
 
 `docker build -t ubuntu-test:latest .`
 
+  [1]: https://github.com/pH7Software/pH7-Social-Dating-CMS
