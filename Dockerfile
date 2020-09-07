@@ -8,7 +8,7 @@ RUN apt-get update
 RUN  apt-get install software-properties-common -y
 RUN add-apt-repository ppa:ondrej/php -y
 
-RUN apt-get -y install apache2
+RUN apt-get -y install wget apache2
 RUN apt-get -y install php
 RUN apt-get -y install php-all-dev
 RUN apt-get -y install php-mbstring
