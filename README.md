@@ -26,5 +26,5 @@ Install Docker.
 
 `cd Ph7CMS-Docker`
 
-`docker build -t ubuntu-test:latest .
+`docker build -t ubuntu-test:latest .`
 
