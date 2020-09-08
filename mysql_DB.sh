@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+echo $MYSQL_USER="ph7user";
+echo $MYSQL_DATABASE="ph7builder";
+echo $MYSQL_PASSWORD="password";
 if [ ! -d '/var/lib/mysql/mysql' -a "${1%_safe}" = 'mysqld' ]; then
 	if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
 		echo >&2 'error: database is uninitialized and MYSQL_ROOT_PASSWORD not set'
@@ -8,7 +11,7 @@ if [ ! -d '/var/lib/mysql/mysql' -a "${1%_safe}" = 'mysqld' ]; then
 		exit 1
 	fi
 	
-	mysql_install_db --user=mysql --datadir=/var/lib/mysql
+	mysql_install_db --user=ph7builder --datadir=/var/lib/mysql
 	
 	# These statements _must_ be on individual lines, and _must_ end with
 	# semicolons (no line breaks or comments are permitted).
