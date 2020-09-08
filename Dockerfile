@@ -27,7 +27,7 @@ RUN sudo aptitude -y install curl git php7.2 libapache2-mod-php7.2 php7.2-common
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 
 
-# Install MySQL.
+# Install MySQL from :https://github.com/dockerfile/mysql/blob/master/Dockerfile
 RUN mkdir -p /var/run/mysqld
 RUN chown mysql:mysql /var/run/mysqld
 RUN \
@@ -54,6 +54,7 @@ CMD ["mysqld_safe"]
 # Expose ports.
 EXPOSE 3306
 
+End of MYSQL installation https://github.com/dockerfile/mysql/blob/master/Dockerfile
 CMD ["mysqld", "--datadir=/var/lib/mysql", "--user=mysql"]
 
 CMD ["/bin/bash", "mysql_DB.sh"]; #"/mysql_Database.sh"]
