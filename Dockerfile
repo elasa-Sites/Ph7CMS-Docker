@@ -6,8 +6,29 @@ FROM php:7.2-apache
 RUN a2enmod rewrite
 
 # install the PHP extensions we need
-RUN apt-get update 
-Run apt-get install -y php7.2 libapache2-mod-php7.2 php7.2-common php7.2-sqlite3 php7.2-curl php7.2-intl php7.2-mbstring php7.2-xmlrpc php7.2-mysql php7.2-gd php7.2-xml php7.2-cli php7.2-zip
+
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils
+
+RUN apt-get install software-properties-common -y
+RUN add-apt-repository ppa:ondrej/php -y
+
+RUN apt-get -y install unzip wget apache2 phpmyadmin aptitude
+RUN apt-get -y install php
+RUN apt-get -y install php-all-dev
+RUN apt-get -y install php-mbstring
+RUN apt-get -y install php-gd
+RUN apt-get -y install composer
+RUN apt-get -y install php-mysql
+RUN apt-get -y install sudo
+RUN apt-get -y install mysql-client
+RUN apt-get -y install vim 
+RUN sudo aptitude -y install mariadb-server mariadb-client
+RUN sudo aptitude -y install curl git php7.2 libapache2-mod-php7.2 php7.2-common php7.2-sqlite3 php7.2-curl php7.2-intl php7.2-mbstring php7.2-xmlrpc php7.2-mysql php7.2-gd php7.2-xml php7.2-cli php7.2-zip 
+RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+
+
+
 Run apt-get install -y libpng12-dev libjpeg-dev mysql-client \
 && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
 && docker-php-ext-install gd \
