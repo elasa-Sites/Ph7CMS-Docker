@@ -33,7 +33,7 @@ ENV MYSQL_VERSION 5.5.40
 # note: we're pulling the *.asc file from mysql.he.net instead of dev.mysql.com because the official mirror 404s that file for whatever reason - maybe it's at a different path?
 RUN apt-get update && apt-get install -y ca-certificates wget --no-install-recommends && rm -rf /var/lib/apt/lists/* \
 	&& wget "https://dev.mysql.com/Downloads/MySQL-$MYSQL_MAJOR/mysql-$MYSQL_VERSION-linux2.6-x86_64.tar.gz" -O mysql.tar.gz \
-	&& wget "https://dev.mysql.com/Downloads/MySQL-$MYSQL_MAJOR/mysql-$MYSQL_VERSION-linux2.6-x86_64.tar.gz.asc" -O mysql.tar.gz.asc \
+	&& wget "http://mirror.lug.udel.edu/pub/mysql/MySQL-$MYSQL_MAJOR/mysql-$MYSQL_VERSION-linux2.6-x86_64.tar.gz.asc" -O mysql.tar.gz.asc \
 	&& apt-get purge -y --auto-remove ca-certificates wget  \
 	&& gpg --verify mysql.tar.gz.asc \
 	&& mkdir /usr/local/mysql \
