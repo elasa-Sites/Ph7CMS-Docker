@@ -1,11 +1,9 @@
-FROM php:7.2-apache
 
-# MAINTAINER tristan@tristanpenman.com
 
-# Enable URL rewriting in .htaccess files
-RUN a2enmod rewrite
+FROM ubuntu:18.04
 
-# install the PHP extensions we need
+ARG DEBIAN_FRONTEND=noninteractive
+
 
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils
@@ -28,36 +26,38 @@ RUN sudo aptitude -y install curl git php7.2 libapache2-mod-php7.2 php7.2-common
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 
 
+#instll mysql form :https://github.com/docker-library/mysql/blob/06bcb63a0b42ed24ef7509c3352e2cf45d139a5e/5.5/Dockerfile
+ENV MYSQL_MAJOR 5.5
+ENV MYSQL_VERSION 5.5.40
 
-Run apt-get install -y libpng12-dev libjpeg-dev mysql-client \
-&& docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
-&& docker-php-ext-install gd \
-&& docker-php-ext-install mbstring \
-&& docker-php-ext-install mysqli \
-&& docker-php-ext-install opcache \
-&& apt-get clean \
-&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# note: we're pulling the *.asc file from mysql.he.net instead of dev.mysql.com because the official mirror 404s that file for whatever reason - maybe it's at a different path?
+RUN apt-get update && apt-get install -y curl --no-install-recommends && rm -rf /var/lib/apt/lists/* \
+	&& curl -SL "http://dev.mysql.com/get/Downloads/MySQL-$MYSQL_MAJOR/mysql-$MYSQL_VERSION-linux2.6-x86_64.tar.gz" -o mysql.tar.gz \
+	&& curl -SL "https://cdn.mysql.com/Downloads/MySQL-$MYSQL_MAJOR/mysql-$MYSQL_VERSION-linux2.6-x86_64.tar.gz.asc" -o mysql.tar.gz.asc \
+	&& apt-get purge -y --auto-remove curl \
+	&& gpg --verify mysql.tar.gz.asc \
+	&& mkdir /usr/local/mysql \
+	&& tar -xzf mysql.tar.gz -C /usr/local/mysql --strip-components=1 \
+	&& rm mysql.tar.gz* \
+	&& rm -rf /usr/local/mysql/mysql-test /usr/local/mysql/sql-bench \
+	&& rm -rf /usr/local/mysql/bin/*-debug /usr/local/mysql/bin/*_embedded \
+	&& find /usr/local/mysql -type f -name "*.a" -delete \
+	&& apt-get update && apt-get install -y binutils && rm -rf /var/lib/apt/lists/* \
+	&& { find /usr/local/mysql -type f -executable -exec strip --strip-all '{}' + || true; } \
+	&& apt-get purge -y --auto-remove binutils
+ENV PATH $PATH:/usr/local/mysql/bin:/usr/local/mysql/scripts
 
-# Allow an existing WordPress install to be mapped into /var/www/html
-VOLUME /var/www/html
 
-# Install wp-cli
-RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN docker-php-ext-install mysqli 
+
+WORKDIR /usr/local/mysql
+VOLUME /var/lib/mysql
+
+EXPOSE 3306
+CMD ["mysqld", "--datadir=/var/lib/mysql", "--user=mysql"]
+
 CMD ["/bin/bash", "mysql_DB.sh"]; #"/mysql_Database.sh"]
-
-# Replace the default apache2-foreground script with one that relies on apache2ctl, so
-# that /etc/apache2/envvars can be used to configure the environment of the www-data user
-COPY bin/apache2-foreground /usr/local/bin/apache2-foreground
-RUN chmod +x /usr/local/bin/apache2-foreground
-
-
-# # Set up entrypoint script
-# ENV SCRIPTS_DIR /scripts
-# RUN mkdir /scripts /scripts/pre-install.d /scripts/post-install.d
-# COPY docker-entrypoint.sh /scripts/entrypoint.sh
-# RUN chmod +x /scripts/entrypoint.sh
-# ENTRYPOINT ["/scripts/entrypoint.sh"]
-
 
 
 WORKDIR /tmp
@@ -104,6 +104,3 @@ RUN a2enmod rewrite
 RUN a2enmod ssl
 RUN a2ensite ph7builder.conf
 CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
-
-CMD ["apache2-foreground"]
-
