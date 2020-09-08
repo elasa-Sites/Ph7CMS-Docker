@@ -5,7 +5,7 @@
 sleep 2s
 # Here we generate random passwords (thank you pwgen!). The first two are for mysql users, the last batch for random keys in wp-config.php
 PH7CMS_DB="ph7builder"
-MYSQL_PASSWORD=`password`
+MYSQL_PASSWORD="password"
 #This is so the passwords show up in logs. 
 echo mysql root password: $MYSQL_PASSWORD
 echo wordpress password: $WORDPRESS_PASSWORD
