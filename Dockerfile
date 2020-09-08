@@ -28,6 +28,8 @@ RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/
 
 
 # Install MySQL.
+RUN mkdir -p /var/run/mysqld
+RUN chown mysql:mysql /var/run/mysqld
 RUN \
   apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server && \
