@@ -23,7 +23,7 @@ Install Docker.
 
 `sudo docker build -t ubuntu-test:latest .`
 
-#Instaltion in https://labs.play-with-docker.com:
+#Instaltion in https://labs.play-with-docker.com or no signup needs [here][2]:
 
 `git clone https://github.com/elasa-Sites/Ph7CMS-Docker`
 
@@ -32,3 +32,4 @@ Install Docker.
 `docker build -t ubuntu-test:latest .`
 
   [1]: https://github.com/pH7Software/pH7-Social-Dating-CMS
+  [2]:https://training.play-with-docker.com/
