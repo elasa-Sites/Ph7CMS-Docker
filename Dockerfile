@@ -27,6 +27,12 @@ RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/
 RUN sudo mysql_secure_installation
 
 
+WORKDIR /usr/local/mysql
+VOLUME /var/lib/mysql
+
+EXPOSE 3306
+CMD ["mysqld", "--datadir=/var/lib/mysql", "--user=mysql"]
+
 CMD ["/bin/bash", "mysql_DB.sh"]; #"/mysql_Database.sh"]
 
 
