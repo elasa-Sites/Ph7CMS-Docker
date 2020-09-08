@@ -30,6 +30,8 @@ WORKDIR /tmp
 RUN wget https://github.com/pH7Software/pH7-Social-Dating-CMS/archive/master.zip
 RUN unzip master.zip
 COPY ./php.ini /etc/php/7.2/apache2/php.ini
+CMD [" sudo systemctl restart apache2.service"]
+RUN /etc/init.d/apache2 reload
 
 RUN mv pH7-Social-Dating-CMS-master /var/www/html/ph7builder
 WORKDIR /var/www/html/ph7builder
