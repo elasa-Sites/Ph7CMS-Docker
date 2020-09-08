@@ -1,7 +1,7 @@
 
 
-# FROM ubuntu:18.04
-FROM dockerfile/ubuntu
+FROM ubuntu:18.04
+# FROM dockerfile/ubuntu
 
 ARG DEBIAN_FRONTEND=noninteractive
 
