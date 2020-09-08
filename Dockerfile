@@ -65,8 +65,8 @@ RUN echo "<VirtualHost *:80>\
      CustomLog ${APACHE_LOG_DIR}/access.log combined\
 \
 </VirtualHost>"> /etc/apache2/sites-available/ph7builder.conf
-RUN echo "127.0.0.1 localhost\
-    127.0.0.1 ph7builder">>/etc/hosts
+RUN grep -qxF 'include "127.0.0.1 ph7builder"' /etc/hosts || echo "127.0.0.1 ph7builder">>/etc/hosts
+RUN grep -qxF 'include "127.0.0.1 localhost"' /etc/hosts || echo "127.0.0.1 localhost\">>/etc/hosts    
 RUN a2enmod rewrite
 RUN a2enmod ssl
 RUN a2ensite ph7builder.conf
