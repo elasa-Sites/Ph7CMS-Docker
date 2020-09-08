@@ -35,20 +35,20 @@ RUN sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 RUN echo "Listen 8080" >> /etc/apache2/ports.conf
 RUN echo "Listen 8081" >> /etc/apache2/ports.conf
 RUN echo "Listen 8443" >> /etc/apache2/ports.conf
-RUN echo "<VirtualHost *:80>
-     ServerAdmin admin@example.com
-     DocumentRoot /var/www/html/ph7builder
-     ServerName example.com
-
-     <Directory /var/www/html/ph7builder/>
-          Options FollowSymlinks
-          AllowOverride All
-          Require all granted
-     </Directory>
-
-     ErrorLog ${APACHE_LOG_DIR}/error.log
-     CustomLog ${APACHE_LOG_DIR}/access.log combined
-
+RUN echo "<VirtualHost *:80>\
+     ServerAdmin admin@example.com\
+     DocumentRoot /var/www/html/ph7builder\
+     ServerName example.com\
+\
+     <Directory /var/www/html/ph7builder/>\
+          Options FollowSymlinks\
+          AllowOverride All\
+          Require all granted\
+     </Directory>\
+\
+     ErrorLog ${APACHE_LOG_DIR}/error.log\
+     CustomLog ${APACHE_LOG_DIR}/access.log combined\
+\
 </VirtualHost>"> /etc/apache2/sites-available/ph7builder.conf
 
 RUN a2enmod rewrite
