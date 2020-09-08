@@ -29,7 +29,7 @@ RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/
 WORKDIR /tmp
 RUN wget https://github.com/pH7Software/pH7-Social-Dating-CMS/archive/master.zip
 RUN unzip master.zip
-COPY pH7-Social-Dating-CMS-master/php.ini /etc/php/7.2/apache2/php.ini
+COPY ./php.ini /etc/php/7.2/apache2/php.ini
 
 RUN mv pH7-Social-Dating-CMS-master /var/www/html/ph7builder
 WORKDIR /var/www/html/ph7builder
