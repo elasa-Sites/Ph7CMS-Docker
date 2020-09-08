@@ -24,8 +24,32 @@ RUN apt-get -y install vim
 RUN sudo aptitude -y install mariadb-server mariadb-client
 RUN sudo aptitude -y install curl git php7.2 libapache2-mod-php7.2 php7.2-common php7.2-sqlite3 php7.2-curl php7.2-intl php7.2-mbstring php7.2-xmlrpc php7.2-mysql php7.2-gd php7.2-xml php7.2-cli php7.2-zip 
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
-RUN sudo mysql_secure_installation
 
+
+#instll mysql form :https://github.com/docker-library/mysql/blob/06bcb63a0b42ed24ef7509c3352e2cf45d139a5e/5.5/Dockerfile
+ENV MYSQL_MAJOR 5.5
+ENV MYSQL_VERSION 5.5.40
+
+# note: we're pulling the *.asc file from mysql.he.net instead of dev.mysql.com because the official mirror 404s that file for whatever reason - maybe it's at a different path?
+RUN apt-get update && apt-get install -y curl --no-install-recommends && rm -rf /var/lib/apt/lists/* \
+	&& curl -SL "http://dev.mysql.com/get/Downloads/MySQL-$MYSQL_MAJOR/mysql-$MYSQL_VERSION-linux2.6-x86_64.tar.gz" -o mysql.tar.gz \
+	&& curl -SL "http://mysql.he.net/Downloads/MySQL-$MYSQL_MAJOR/mysql-$MYSQL_VERSION-linux2.6-x86_64.tar.gz.asc" -o mysql.tar.gz.asc \
+	&& apt-get purge -y --auto-remove curl \
+	&& gpg --verify mysql.tar.gz.asc \
+	&& mkdir /usr/local/mysql \
+	&& tar -xzf mysql.tar.gz -C /usr/local/mysql --strip-components=1 \
+	&& rm mysql.tar.gz* \
+	&& rm -rf /usr/local/mysql/mysql-test /usr/local/mysql/sql-bench \
+	&& rm -rf /usr/local/mysql/bin/*-debug /usr/local/mysql/bin/*_embedded \
+	&& find /usr/local/mysql -type f -name "*.a" -delete \
+	&& apt-get update && apt-get install -y binutils && rm -rf /var/lib/apt/lists/* \
+	&& { find /usr/local/mysql -type f -executable -exec strip --strip-all '{}' + || true; } \
+	&& apt-get purge -y --auto-remove binutils
+ENV PATH $PATH:/usr/local/mysql/bin:/usr/local/mysql/scripts
+
+
+
+RUN docker-php-ext-install mysqli 
 
 WORKDIR /usr/local/mysql
 VOLUME /var/lib/mysql
