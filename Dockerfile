@@ -11,7 +11,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ap
 RUN apt-get install software-properties-common -y
 RUN add-apt-repository ppa:ondrej/php -y
 
-RUN apt-get -y install unzip wget apache2
+RUN apt-get -y install unzip wget apache2 phpmyadmin
 RUN apt-get -y install php
 RUN apt-get -y install php-all-dev
 RUN apt-get -y install php-mbstring
@@ -26,12 +26,42 @@ RUN sudo apt-get -y install curl git php7.2 libapache2-mod-php7.2 php7.2-common 
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 
 
+# Setup Apache.
+# In order to run our Simpletest tests, we need to make Apache
+# listen on the same port as the one we forwarded. Because we use
+# 8080 by default, we set it up for that port.
+RUN sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+
+RUN echo "Listen 8080" >> /etc/apache2/ports.conf
+RUN echo "Listen 8081" >> /etc/apache2/ports.conf
+RUN echo "Listen 8443" >> /etc/apache2/ports.conf
+RUN echo "<VirtualHost *:80>
+     ServerAdmin admin@example.com
+     DocumentRoot /var/www/html/ph7builder
+     ServerName example.com
+
+     <Directory /var/www/html/ph7builder/>
+          Options FollowSymlinks
+          AllowOverride All
+          Require all granted
+     </Directory>
+
+     ErrorLog ${APACHE_LOG_DIR}/error.log
+     CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+</VirtualHost>"> /etc/apache2/sites-available/ph7builder.conf
+
+RUN a2enmod rewrite
+RUN a2enmod ssl
+RUN a2ensite ph7builder.conf
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+
+
 WORKDIR /tmp
 RUN wget https://github.com/pH7Software/pH7-Social-Dating-CMS/archive/master.zip
 RUN unzip master.zip
 COPY ./php.ini /etc/php/7.2/apache2/php.ini
-CMD [" sudo systemctl restart apache2.service"]
-RUN /etc/init.d/apache2 reload
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
 
 RUN mv pH7-Social-Dating-CMS-master /var/www/html/ph7builder
 WORKDIR /var/www/html/ph7builder
