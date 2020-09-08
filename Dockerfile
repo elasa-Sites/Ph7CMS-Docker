@@ -7,7 +7,7 @@ RUN a2enmod rewrite
 
 # install the PHP extensions we need
 RUN apt-get update 
-Run apt-get -y php7.2 libapache2-mod-php7.2 php7.2-common php7.2-sqlite3 php7.2-curl php7.2-intl php7.2-mbstring php7.2-xmlrpc php7.2-mysql php7.2-gd php7.2-xml php7.2-cli php7.2-zip
+Run apt-get install -y php7.2 libapache2-mod-php7.2 php7.2-common php7.2-sqlite3 php7.2-curl php7.2-intl php7.2-mbstring php7.2-xmlrpc php7.2-mysql php7.2-gd php7.2-xml php7.2-cli php7.2-zip
 Run apt-get install -y libpng12-dev libjpeg-dev mysql-client \
 && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
 && docker-php-ext-install gd \
@@ -29,12 +29,13 @@ CMD ["/bin/bash", "mysql_DB.sh"]; #"/mysql_Database.sh"]
 COPY bin/apache2-foreground /usr/local/bin/apache2-foreground
 RUN chmod +x /usr/local/bin/apache2-foreground
 
-# Set up entrypoint script
-ENV SCRIPTS_DIR /scripts
-RUN mkdir /scripts /scripts/pre-install.d /scripts/post-install.d
-COPY docker-entrypoint.sh /scripts/entrypoint.sh
-RUN chmod +x /scripts/entrypoint.sh
-ENTRYPOINT ["/scripts/entrypoint.sh"]
+
+# # Set up entrypoint script
+# ENV SCRIPTS_DIR /scripts
+# RUN mkdir /scripts /scripts/pre-install.d /scripts/post-install.d
+# COPY docker-entrypoint.sh /scripts/entrypoint.sh
+# RUN chmod +x /scripts/entrypoint.sh
+# ENTRYPOINT ["/scripts/entrypoint.sh"]
 
 
 
