@@ -32,4 +32,4 @@ Install Docker.
 `docker build -t ubuntu-test:latest .`
 
   [1]: https://github.com/pH7Software/pH7-Social-Dating-CMS
-  [2]:https://training.play-with-docker.com/
+  [2]:https://training.play-with-docker.com/beginner-linux/
