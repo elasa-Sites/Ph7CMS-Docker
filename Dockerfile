@@ -1,4 +1,5 @@
 
+
 FROM ubuntu:18.04
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -29,7 +30,7 @@ WORKDIR /tmp
 RUN wget https://github.com/pH7Software/pH7-Social-Dating-CMS/archive/master.zip
 RUN unzip master.zip
 RUN mv pH7-Social-Dating-CMS-master /var/www/html/ph7builder
-RUN /var/www/html/ph7builder
+WORKDIR /var/www/html/ph7builder
 RUN sudo composer install
 
 RUN  chown -R www-data:www-data /var/www/html/ph7builder/
