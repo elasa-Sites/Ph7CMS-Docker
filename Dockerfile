@@ -54,7 +54,7 @@ CMD ["mysqld_safe"]
 # Expose ports.
 EXPOSE 3306
 
-End of MYSQL installation https://github.com/dockerfile/mysql/blob/master/Dockerfile
+# End of MYSQL installation https://github.com/dockerfile/mysql/blob/master/Dockerfile
 CMD ["mysqld", "--datadir=/var/lib/mysql", "--user=mysql"]
 
 CMD ["/bin/bash", "mysql_DB.sh"]; #"/mysql_Database.sh"]
