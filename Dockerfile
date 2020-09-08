@@ -53,7 +53,7 @@ RUN echo "Listen 8443" >> /etc/apache2/ports.conf
 RUN echo "<VirtualHost *:80>\
      ServerAdmin admin@example.com\
      DocumentRoot /var/www/html/ph7builder\
-     ServerName example.com\
+     ServerName 127.0.0.1\
 \
      <Directory /var/www/html/ph7builder/>\
           Options FollowSymlinks\
@@ -65,7 +65,8 @@ RUN echo "<VirtualHost *:80>\
      CustomLog ${APACHE_LOG_DIR}/access.log combined\
 \
 </VirtualHost>"> /etc/apache2/sites-available/ph7builder.conf
-
+RUN echo "127.0.0.1 localhost]
+127.0.0.1 ph7builder">/etc/hosts
 RUN a2enmod rewrite
 RUN a2enmod ssl
 RUN a2ensite ph7builder.conf
