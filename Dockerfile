@@ -26,6 +26,20 @@ RUN sudo aptitude -y install curl git php7.2 libapache2-mod-php7.2 php7.2-common
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 
 
+
+WORKDIR /tmp
+RUN wget https://github.com/pH7Software/pH7-Social-Dating-CMS/archive/master.zip
+RUN unzip master.zip
+COPY ./php.ini /etc/php/7.2/apache2/php.ini
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+
+RUN mv pH7-Social-Dating-CMS-master /var/www/html/ph7builder
+WORKDIR /var/www/html/ph7builder
+RUN sudo composer install
+
+RUN  chown -R www-data:www-data /var/www/html/ph7builder/
+RUN  chmod -R 755 /var/www/html/ph7builder/
+
 # Setup Apache.
 # In order to run our Simpletest tests, we need to make Apache
 # listen on the same port as the one we forwarded. Because we use
@@ -55,23 +69,3 @@ RUN a2enmod rewrite
 RUN a2enmod ssl
 RUN a2ensite ph7builder.conf
 CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
-
-
-WORKDIR /tmp
-RUN wget https://github.com/pH7Software/pH7-Social-Dating-CMS/archive/master.zip
-RUN unzip master.zip
-COPY ./php.ini /etc/php/7.2/apache2/php.ini
-CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
-
-RUN mv pH7-Social-Dating-CMS-master /var/www/html/ph7builder
-WORKDIR /var/www/html/ph7builder
-RUN sudo composer install
-
-RUN  chown -R www-data:www-data /var/www/html/ph7builder/
-RUN  chmod -R 755 /var/www/html/ph7builder/
-
-RUN  systemctl restart apache2.service
-
-RUN a2ensite ph7builder.conf
-RUN a2enmod rewrite
-RUN systemctl restart apache2.service
