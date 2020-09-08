@@ -6,7 +6,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends apt-utils
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils
+
 RUN apt-get install software-properties-common -y
 RUN add-apt-repository ppa:ondrej/php -y
 
