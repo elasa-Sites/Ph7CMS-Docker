@@ -1,6 +1,7 @@
 
 
-FROM ubuntu:18.04
+# FROM ubuntu:18.04
+FROM dockerfile/ubuntu
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -26,35 +27,31 @@ RUN sudo aptitude -y install curl git php7.2 libapache2-mod-php7.2 php7.2-common
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 
 
-#instll mysql form :https://github.com/docker-library/mysql/blob/06bcb63a0b42ed24ef7509c3352e2cf45d139a5e/5.5/Dockerfile
-ENV MYSQL_MAJOR 5.5
-ENV MYSQL_VERSION 5.5.40
+# Install MySQL.
+RUN \
+  apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server && \
+  rm -rf /var/lib/apt/lists/* && \
+  sed -i 's/^\(bind-address\s.*\)/# \1/' /etc/mysql/my.cnf && \
+  sed -i 's/^\(log_error\s.*\)/# \1/' /etc/mysql/my.cnf && \
+  echo "mysqld_safe &" > /tmp/config && \
+  echo "mysqladmin --silent --wait=30 ping || exit 1" >> /tmp/config && \
+  echo "mysql -e 'GRANT ALL PRIVILEGES ON *.* TO \"root\"@\"%\" WITH GRANT OPTION;'" >> /tmp/config && \
+  bash /tmp/config && \
+  rm -f /tmp/config
 
-# note: we're pulling the *.asc file from mysql.he.net instead of dev.mysql.com because the official mirror 404s that file for whatever reason - maybe it's at a different path?
-RUN apt-get update && apt-get install -y ca-certificates wget --no-install-recommends && rm -rf /var/lib/apt/lists/* \
-	&& wget "https://dev.mysql.com/Downloads/MySQL-$MYSQL_MAJOR/mysql-$MYSQL_VERSION-linux2.6-x86_64.tar.gz" -O mysql.tar.gz \
-	&& wget "http://mirror.lug.udel.edu/pub/mysql/MySQL-$MYSQL_MAJOR/mysql-$MYSQL_VERSION-linux2.6-x86_64.tar.gz.asc" -O mysql.tar.gz.asc \
-	&& apt-get purge -y --auto-remove ca-certificates wget  \
-	&& gpg --verify mysql.tar.gz.asc \
-	&& mkdir /usr/local/mysql \
-	&& tar -xzf mysql.tar.gz -C /usr/local/mysql --strip-components=1 \
-	&& rm mysql.tar.gz* \
-	&& rm -rf /usr/local/mysql/mysql-test /usr/local/mysql/sql-bench \
-	&& rm -rf /usr/local/mysql/bin/*-debug /usr/local/mysql/bin/*_embedded \
-	&& find /usr/local/mysql -type f -name "*.a" -delete \
-	&& apt-get update && apt-get install -y binutils && rm -rf /var/lib/apt/lists/* \
-	&& { find /usr/local/mysql -type f -executable -exec strip --strip-all '{}' + || true; } \
-	&& apt-get purge -y --auto-remove binutils
-ENV PATH $PATH:/usr/local/mysql/bin:/usr/local/mysql/scripts
+# Define mountable directories.
+VOLUME ["/etc/mysql", "/var/lib/mysql"]
 
+# Define working directory.
+WORKDIR /data
 
+# Define default command.
+CMD ["mysqld_safe"]
 
-RUN docker-php-ext-install mysqli 
-
-WORKDIR /usr/local/mysql
-VOLUME /var/lib/mysql
-
+# Expose ports.
 EXPOSE 3306
+
 CMD ["mysqld", "--datadir=/var/lib/mysql", "--user=mysql"]
 
 CMD ["/bin/bash", "mysql_DB.sh"]; #"/mysql_Database.sh"]
